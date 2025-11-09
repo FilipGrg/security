@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>drugi labos</title></head>
+<body>
+  <h1>Demo ranjivosti</h1>
+
+  <form method="post" action="/toggle">
+    <label><input type="checkbox" name="sqli" <%= flags.sqli ? 'checked' : '' %>> SQL Injection (tautologija)</label><br>
+    <label><input type="checkbox" name="csrf" <%= flags.csrf ? 'checked' : '' %>> CSRF (lažiranje zahtjeva)</label><br>
+    <button type="submit">Postavi zastavice</button>
+  </form>
+
+  <hr>
+  <h2>SQL Injection — Login</h2>
+  <p>Testni admin: username = <b>admin</b>, pin = <b>1234</b></p>
+  <form method="post" action="/login">
+    Username: <input name="username" value="admin"><br>
+    PIN: <input name="pin" value="1234"><br>
+    <button type="submit">Login</button>
+  </form>
+  <p>Ako je SQLi uključen, probaj za PIN staviti: <code>' OR '1'='1</code> ili za username: <code>admin' OR 1=1 -- </code></p>
+
+  <hr>
+  <h2>CSRF — Promijeni admin note</h2>
+  <p>Trenutna admin email: <b><%= admin.email %></b></p>
+  <p>Trenutna admin note: <b id="note"><%= admin.note %></b></p>
+
+  <form method="post" action="/change-note">
+    Nova note: <input name="note" value="Hacked by me"><br>
+    <% if (!flags.csrf) { %>
+      <!-- if CSRF disabled, we do not need to show token -->
+    <% } else { %>
+      <!-- when CSRF enabled (vulnerable flag = true), the app is vulnerable (no token required);
+           when flag is false, server will require CSRF token — but this template cannot get token
+           because we only attach token on GET routes with csurf(). For demonstration, server handles logic. -->
+    <% } %>
+    <button type="submit">Promijeni note</button>
+  </form>
+
+  <hr>
+  <h3>Ostalo</h3>
+  <a href="/attacker" target="_blank">Primjer vanjske (attacker) web stranice za CSRF</a>
+  <p>API za provjeru zastavica: <a href="/flags">/flags</a></p>
+</body>
+</html>
